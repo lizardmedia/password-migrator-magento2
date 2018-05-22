@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Maciej Sławik <maciej.slawik@lizardmedia.pl>
+ * @copyright Copyright (C) 2018 Lizard Media (http://lizardmedia.pl)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <!--Preference section-->
+
+    <preference for="LizardMedia\PasswordMigrator\Api\Data\PasswordInterface"
+                type="LizardMedia\PasswordMigrator\Model\Data\Password"/>
+
+    <preference for="LizardMedia\PasswordMigrator\Api\Data\PasswordRepositoryInterface"
+                type="LizardMedia\PasswordMigrator\Model\Data\PasswordRepository"/>
+
+    <preference for="LizardMedia\PasswordMigrator\Api\LegacyAuthenticationInterface"
+                type="LizardMedia\PasswordMigrator\Model\LegacyAuthentication"/>
+
+    <preference for="LizardMedia\PasswordMigrator\Api\PasswordManagementInterface"
+                type="LizardMedia\PasswordMigrator\Model\PasswordManagement"/>
+
+    <preference for="LizardMedia\PasswordMigrator\Api\Config\ConfigProviderInterface"
+                type="LizardMedia\PasswordMigrator\Model\Config\ConfigProvider"/>
+
+    <preference for="LizardMedia\PasswordMigrator\Api\ExpiredPasswordCleanerInterface"
+                type="LizardMedia\PasswordMigrator\Model\ExpiredPasswordCleaner"/>
+
+    <!--End of preference section-->
+
+    <!--Plugin section-->
+
+    <type name="Magento\Customer\Model\Authentication">
+        <plugin name="passwordmigrator_authentication"
+                type="LizardMedia\PasswordMigrator\Plugin\Model\Authentication"
+                sortOrder="10"
+        />
+    </type>
+
+    <!--End of plugin section-->
+
+</config>

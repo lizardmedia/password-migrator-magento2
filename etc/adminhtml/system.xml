@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Maciej Sławik <maciej.slawik@lizardmedia.pl>
+ * @copyright Copyright (C) 2018 Lizard Media (http://lizardmedia.pl)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="password_migrator" translate="label" sortOrder="480">
+            <label>Password Migrator</label>
+        </tab>
+        <section id="password_migrator" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+            <label>Password Migrator</label>
+            <tab>password_migrator</tab>
+            <class>separator-top</class>
+            <resource>LizardMedia_PasswordMigrator::config</resource>
+            <group id="general" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>General</label>
+                <field id="cleanup" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Automatic cleanup after</label>
+                    <source_model>LizardMedia\PasswordMigrator\Model\Config\Source\Cleanup</source_model>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

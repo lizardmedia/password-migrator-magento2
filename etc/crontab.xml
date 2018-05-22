@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Maciej Sławik <maciej.slawik@lizardmedia.pl>
+ * @copyright Copyright (C) 2018 Lizard Media (http://lizardmedia.pl)
+ */
+-->
+<config>
+    <group id="default">
+        <job name="password_migrator_expired_cleanup" instance="LizardMedia\PasswordMigrator\Cron\CleanExpiredPasswords" method="execute">
+            <schedule>0 1 * * *</schedule>
+        </job>
+    </group>
+</config>
