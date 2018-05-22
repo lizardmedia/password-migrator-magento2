@@ -1,3 +1,7 @@
+[![Latest Stable Version](https://poser.pugx.org/lizardmedia/module-password-migrator/v/stable)](https://packagist.org/packages/lizardmedia/module-password-migrator)
+[![Total Downloads](https://poser.pugx.org/lizardmedia/module-password-migrator/downloads)](https://packagist.org/packages/lizardmedia/module-password-migrator)
+[![License](https://poser.pugx.org/lizardmedia/module-password-migrator/license)](https://packagist.org/packages/lizardmedia/module-password-migrator)
+
 # Lizard Media PasswordMigrator Magento2 module
 
 A Magento2 module which helps you migrate user passwords when migrating data from
