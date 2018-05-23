@@ -1,6 +1,9 @@
 [![Latest Stable Version](https://poser.pugx.org/lizardmedia/module-password-migrator/v/stable)](https://packagist.org/packages/lizardmedia/module-password-migrator)
 [![Total Downloads](https://poser.pugx.org/lizardmedia/module-password-migrator/downloads)](https://packagist.org/packages/lizardmedia/module-password-migrator)
 [![License](https://poser.pugx.org/lizardmedia/module-password-migrator/license)](https://packagist.org/packages/lizardmedia/module-password-migrator)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/lizardmedia/password-migrator-magento2/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/lizardmedia/password-migrator-magento2/?branch=master)
+[![Build Status](https://scrutinizer-ci.com/g/lizardmedia/password-migrator-magento2/badges/build.png?b=master)](https://scrutinizer-ci.com/g/lizardmedia/password-migrator-magento2/build-status/master)
+
 
 # Lizard Media PasswordMigrator Magento2 module
 

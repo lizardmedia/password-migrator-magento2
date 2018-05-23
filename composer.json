@@ -7,7 +7,7 @@
     "magento/module-customer": ">101.0"
   },
   "type": "magento2-module",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "license": [
     "MIT"
   ],
@@ -18,5 +18,14 @@
     "psr-4": {
       "LizardMedia\\PasswordMigrator\\": ""
     }
-  }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "*"
+  },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://repo.magento.com/"
+    }
+  ]
 }
