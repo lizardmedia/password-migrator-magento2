@@ -45,10 +45,10 @@ class Password implements PasswordInterface
 
     /**
      * Password constructor.
-     * @param int $id
      * @param int $customerId
+     * @param int $id
      */
-    public function __construct(int $id, int $customerId)
+    public function __construct(int $customerId, int $id = 0)
     {
         $this->customerId = $customerId;
         $this->id = $id;
