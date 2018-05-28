@@ -88,7 +88,7 @@ class InstallSchema implements InstallSchemaInterface
             Password::CUSTOMER_ID,
             $setup->getTable('customer_entity'),
             'entity_id',
-            Table::ACTION_SET_DEFAULT
+            Table::ACTION_CASCADE
         )->addIndex(
             $setup->getIdxName(
                 PasswordResource::TABLE_NAME,

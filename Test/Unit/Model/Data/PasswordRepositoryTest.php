@@ -143,7 +143,7 @@ class PasswordRepositoryTest extends TestCase
             ->method('load')
             ->with($password, 1);
 
-        $password->expects($this->exactly(4))
+        $password->expects($this->exactly(3))
             ->method('setData');
 
         $this->passwordResource->expects($this->once())

@@ -91,7 +91,6 @@ class PasswordRepository implements PasswordRepositoryInterface
         $model->setData(Password::CUSTOMER_ID, $password->getCustomerId());
         $model->setData(Password::PASSWORD, $password->getPassword());
         $model->setData(Password::SALT, $password->getSalt());
-        $model->setData(Password::CREATED_AT, $password->getCreatedAt());
 
         $this->passwordResource->save($model);
     }
