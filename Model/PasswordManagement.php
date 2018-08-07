@@ -15,7 +15,9 @@ use LizardMedia\PasswordMigrator\Api\Data\PasswordRepositoryInterface;
 use LizardMedia\PasswordMigrator\Api\PasswordManagementInterface;
 use Magento\Customer\Api\AccountManagementInterface;
 use Magento\Customer\Api\CustomerRepositoryInterface;
+use Magento\Customer\Model\AccountManagement;
 use Magento\Customer\Model\CustomerRegistry;
+use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 
@@ -31,14 +33,14 @@ class PasswordManagement implements PasswordManagementInterface
     private $passwordRepository;
 
     /**
-     * @var AccountManagementInterface
-     */
-    private $accountManagement;
-
-    /**
      * @var CustomerRepositoryInterface
      */
     private $customerRepository;
+
+    /**
+     * @var AccountManagementInterface
+     */
+    private $accountManagement;
 
     /**
      * @var CustomerRegistry
@@ -48,19 +50,19 @@ class PasswordManagement implements PasswordManagementInterface
     /**
      * PasswordManagement constructor.
      * @param PasswordRepositoryInterface $passwordRepository
-     * @param AccountManagementInterface $accountManagement
      * @param CustomerRepositoryInterface $customerRepository
+     * @param AccountManagementInterface $accountManagement
      * @param CustomerRegistry $customerRegistry
      */
     public function __construct(
         PasswordRepositoryInterface $passwordRepository,
-        AccountManagementInterface $accountManagement,
         CustomerRepositoryInterface $customerRepository,
+        AccountManagementInterface $accountManagement,
         CustomerRegistry $customerRegistry
     ) {
         $this->passwordRepository = $passwordRepository;
-        $this->accountManagement = $accountManagement;
         $this->customerRepository = $customerRepository;
+        $this->accountManagement = $accountManagement;
         $this->customerRegistry = $customerRegistry;
     }
 
@@ -68,6 +70,7 @@ class PasswordManagement implements PasswordManagementInterface
      * @param int $customerId
      * @param string $newPassword
      * @return void
+     * @throws InputException
      */
     public function updateCustomerPassword(int $customerId, string $newPassword): void
     {
@@ -75,7 +78,9 @@ class PasswordManagement implements PasswordManagementInterface
             $this->generateNewResetToken($customerId);
             $this->updatePassword($customerId, $newPassword);
             $this->removeLegacyPassword($customerId);
-        } catch (Exception $e) {
+        } catch (InputException $exception) {
+            throw $exception;
+        } catch (Exception $exception) {
         }
     }
 
@@ -89,7 +94,7 @@ class PasswordManagement implements PasswordManagementInterface
         $customerData = $this->customerRepository->getById($customerId);
         try {
             $this->accountManagement->initiatePasswordReset($customerData->getEmail(), false);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
         }
     }
 

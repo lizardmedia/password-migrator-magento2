@@ -14,9 +14,12 @@ use Exception;
 use LizardMedia\PasswordMigrator\Api\LegacyAuthenticationInterface;
 use LizardMedia\PasswordMigrator\Api\PasswordManagementInterface;
 use LizardMedia\PasswordMigrator\Plugin\Model\Authentication;
+use Magento\Customer\Model\Authentication as AuthenticationModel;
+use Magento\Customer\Model\Session;
+use Magento\Framework\Exception\InputException;
+use Magento\Framework\Url;
 use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
-use Magento\Customer\Model\Authentication as AuthenticationModel;
 
 /**
  * Class AuthenticationTest
@@ -40,6 +43,16 @@ class AuthenticationTest extends TestCase
     private $authenticationModel;
 
     /**
+     * @var MockObject|Session
+     */
+    private $session;
+
+    /**
+     * @var MockObject|Url
+     */
+    private $url;
+
+    /**
      * @return void
      */
     protected function setUp()
@@ -51,6 +64,12 @@ class AuthenticationTest extends TestCase
         $this->authenticationModel = $this->getMockBuilder(AuthenticationModel::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->session = $this->getMockBuilder(Session::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->url = $this->getMockBuilder(Url::class)
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     /**
@@ -58,7 +77,12 @@ class AuthenticationTest extends TestCase
      */
     public function testAroundAuthenticateWhenCanLegacyAuthenticate()
     {
-        $authenticationPlugin = new Authentication($this->legacyAuthentication, $this->passwordManagement);
+        $authenticationPlugin = new Authentication(
+            $this->legacyAuthentication,
+            $this->passwordManagement,
+            $this->session,
+            $this->url
+        );
         $customerId = 3;
         $password = 'password';
 
@@ -89,7 +113,12 @@ class AuthenticationTest extends TestCase
      */
     public function testAroundAuthenticateWhenCannotLegacyAuthenticate()
     {
-        $authenticationPlugin = new Authentication($this->legacyAuthentication, $this->passwordManagement);
+        $authenticationPlugin = new Authentication(
+            $this->legacyAuthentication,
+            $this->passwordManagement,
+            $this->session,
+            $this->url
+        );
         $customerId = 3;
         $password = 'password';
 
@@ -101,6 +130,54 @@ class AuthenticationTest extends TestCase
             ->method('canLegacyAuthenticate')
             ->with($customerId, $password)
             ->willReturn(false);
+
+        $this->expectException(Exception::class);
+
+        $authenticationPlugin->aroundAuthenticate(
+            $this->authenticationModel,
+            $proceed,
+            $customerId,
+            $password
+        );
+    }
+
+
+    /**
+     * @throws Exception
+     */
+    public function testAroundAuthenticateWhenNewPasswordCantBeGenerated()
+    {
+        $authenticationPlugin = new Authentication(
+            $this->legacyAuthentication,
+            $this->passwordManagement,
+            $this->session,
+            $this->url
+        );
+        $customerId = 3;
+        $password = 'password';
+
+        $proceed = function ($customerId, $password) {
+            throw new Exception();
+        };
+
+        $this->legacyAuthentication->expects($this->once())
+            ->method('canLegacyAuthenticate')
+            ->with($customerId, $password)
+            ->willReturn(true);
+        $this->passwordManagement->expects($this->once())
+            ->method('updateCustomerPassword')
+            ->with($customerId, $password)
+            ->willThrowException(new InputException());
+
+        $this->url->expects($this->once())
+            ->method('getUrl')
+            ->with('customer/account/forgotpassword')
+            ->willReturn('http://test.com/customer/account/forgotpassword');
+
+        $this->session->expects($this->once())
+            ->method('setBeforeAuthUrl')
+            ->with('http://test.com/customer/account/forgotpassword')
+            ->willReturn($this->session);
 
         $this->expectException(Exception::class);
 
