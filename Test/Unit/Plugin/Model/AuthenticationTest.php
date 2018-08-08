@@ -15,6 +15,8 @@ use LizardMedia\PasswordMigrator\Api\LegacyAuthenticationInterface;
 use LizardMedia\PasswordMigrator\Api\PasswordManagementInterface;
 use LizardMedia\PasswordMigrator\Plugin\Model\Authentication;
 use Magento\Customer\Model\Authentication as AuthenticationModel;
+use Magento\Customer\Model\CustomerRegistry;
+use Magento\Customer\Model\Data\CustomerSecure;
 use Magento\Customer\Model\Session;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Url;
@@ -36,6 +38,11 @@ class AuthenticationTest extends TestCase
      * @var MockObject|PasswordManagementInterface
      */
     private $passwordManagement;
+
+    /**
+     * @var MockObject|CustomerRegistry
+     */
+    private $customerRegistry;
 
     /**
      * @var MockObject|AuthenticationModel
@@ -61,6 +68,9 @@ class AuthenticationTest extends TestCase
             ->getMock();
         $this->passwordManagement = $this->getMockBuilder(PasswordManagementInterface::class)
             ->getMock();
+        $this->customerRegistry = $this->getMockBuilder(CustomerRegistry::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->authenticationModel = $this->getMockBuilder(AuthenticationModel::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -80,6 +90,7 @@ class AuthenticationTest extends TestCase
         $authenticationPlugin = new Authentication(
             $this->legacyAuthentication,
             $this->passwordManagement,
+            $this->customerRegistry,
             $this->session,
             $this->url
         );
@@ -116,6 +127,7 @@ class AuthenticationTest extends TestCase
         $authenticationPlugin = new Authentication(
             $this->legacyAuthentication,
             $this->passwordManagement,
+            $this->customerRegistry,
             $this->session,
             $this->url
         );
@@ -150,6 +162,7 @@ class AuthenticationTest extends TestCase
         $authenticationPlugin = new Authentication(
             $this->legacyAuthentication,
             $this->passwordManagement,
+            $this->customerRegistry,
             $this->session,
             $this->url
         );
@@ -169,14 +182,34 @@ class AuthenticationTest extends TestCase
             ->with($customerId, $password)
             ->willThrowException(new InputException());
 
+        $customerSecure = $this->getMockBuilder(CustomerSecure::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getRpToken'])
+            ->getMock();
+
+        $this->customerRegistry->expects($this->once())
+            ->method('retrieveSecureData')
+            ->with($customerId)
+            ->willReturn($customerSecure);
+
+        $customerSecure->expects($this->once())
+            ->method('getRpToken')
+            ->willReturn('fdsfsdfsdfs');
+
         $this->url->expects($this->once())
             ->method('getUrl')
-            ->with('customer/account/forgotpassword')
-            ->willReturn('http://test.com/customer/account/forgotpassword');
+            ->with(
+                'customer/account/createPassword',
+                [
+                    'id' => $customerId,
+                    'token' => 'fdsfsdfsdfs'
+                ]
+            )
+            ->willReturn('http://test.com/customer/account/createPassword');
 
         $this->session->expects($this->once())
             ->method('setBeforeAuthUrl')
-            ->with('http://test.com/customer/account/forgotpassword')
+            ->with('http://test.com/customer/account/createPassword')
             ->willReturn($this->session);
 
         $this->expectException(Exception::class);
