@@ -14,6 +14,7 @@ use Exception;
 use LizardMedia\PasswordMigrator\Api\LegacyAuthenticationInterface;
 use LizardMedia\PasswordMigrator\Api\PasswordManagementInterface;
 use Magento\Customer\Model\Authentication as AuthenticationModel;
+use Magento\Customer\Model\CustomerRegistry;
 use Magento\Customer\Model\Session;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Url;
@@ -36,6 +37,11 @@ class Authentication
     private $passwordManagement;
 
     /**
+     * @var CustomerRegistry
+     */
+    private $customerRegistry;
+
+    /**
      * @var Session
      */
     private $session;
@@ -49,17 +55,20 @@ class Authentication
      * Authentication constructor.
      * @param LegacyAuthenticationInterface $legacyAuthentication
      * @param PasswordManagementInterface $passwordManagement
+     * @param CustomerRegistry $customerRegistry
      * @param Session $session
      * @param Url $url
      */
     public function __construct(
         LegacyAuthenticationInterface $legacyAuthentication,
         PasswordManagementInterface $passwordManagement,
+        CustomerRegistry $customerRegistry,
         Session $session,
         Url $url
     ) {
         $this->legacyAuthentication = $legacyAuthentication;
         $this->passwordManagement = $passwordManagement;
+        $this->customerRegistry = $customerRegistry;
         $this->session = $session;
         $this->url = $url;
     }
@@ -98,17 +107,25 @@ class Authentication
         try {
             $this->passwordManagement->updateCustomerPassword($customerId, $password);
         } catch (InputException $exception) {
-            $this->session->setBeforeAuthUrl($this->getResetPasswordUrl());
+            $this->session->setBeforeAuthUrl($this->getResetPasswordUrl($customerId));
             throw $exception;
         }
     }
 
 
     /**
+     * @param int $customerId
      * @return string
      */
-    private function getResetPasswordUrl() : string
+    private function getResetPasswordUrl(int $customerId) : string
     {
-        return $this->url->getUrl('customer/account/forgotpassword');
+        $secureData = $this->customerRegistry->retrieveSecureData($customerId);
+        return $this->url->getUrl(
+            'customer/account/createPassword',
+            [
+                'id' => $customerId,
+                'token' => $secureData->getRpToken()
+            ]
+        );
     }
 }
