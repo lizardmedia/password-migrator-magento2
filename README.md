@@ -18,6 +18,8 @@ saves the password after encypting it using Magento build-in service and logs th
 
 * Allows customers to log into Magento using passwords from legacy e-commerce system
 * Saves customers password as build-in Magento password
+* Redirects customer to password creation if legacy password does not fit into store password strength/pattern policy
+with reset password token already generated
 * Clears the legacy password table after a year/2 years/never since data migration
 
 ## Prerequisites ##
