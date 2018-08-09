@@ -31,6 +31,13 @@
 
     <!--Plugin section-->
 
+    <type name="Magento\Customer\Model\AccountManagement">
+        <plugin name="passwordmigrator_accountmanagement"
+                type="LizardMedia\PasswordMigrator\Plugin\Model\AccountManagement"
+                sortOrder="10"
+        />
+    </type>
+
     <type name="Magento\Customer\Model\Authentication">
         <plugin name="passwordmigrator_authentication"
                 type="LizardMedia\PasswordMigrator\Plugin\Model\Authentication"
